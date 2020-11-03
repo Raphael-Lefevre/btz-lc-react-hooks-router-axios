@@ -21,20 +21,34 @@ const Article = (props) => {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    Axios.get(
-      `https://jsonplaceholder.typicode.com/posts/${props.match.params.id}`
-    )
-      .then((res) => {
-        setPost(res.data);
+    const fetchDatas = async () => {
+      const resPost = await Axios.get(
+        `https://jsonplaceholder.typicode.com/posts/${props.match.params.id}`
+      );
+      const resUser = await Axios.get(
+        `https://jsonplaceholder.typicode.com/users/${resPost.data.userId}`
+      );
 
-        return Axios.get(
-          `https://jsonplaceholder.typicode.com/users/${res.data.userId}`
-        );
-      })
-      .then((res) => {
-        setUser(res.data);
-        setLoading(false);
-      });
+      setPost(resPost.data);
+      setUser(resUser.data);
+      setLoading(false);
+    };
+
+    fetchDatas();
+    // Axios.get(
+    //   `https://jsonplaceholder.typicode.com/posts/${props.match.params.id}`
+    // )
+    //   .then((res) => {
+    //     setPost(res.data);
+
+    //     return Axios.get(
+    //       `https://jsonplaceholder.typicode.com/users/${res.data.userId}`
+    //     );
+    //   })
+    //   .then((res) => {
+    //     setUser(res.data);
+    //     setLoading(false);
+    //   });
   }, []);
 
   if (loading) return <Spinner />;
